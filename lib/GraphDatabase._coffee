@@ -293,6 +293,37 @@ module.exports = class GraphDatabase
 
         catch error
             throw adjustError error
+    #
+    # Fetch and "return" (via callback) the nodes indexed under the given
+    # property and value in the given index as well as matching the given query (in
+    # {http://lucene.apache.org/core/old_versioned_docs/versions/3_1_0/queryparsersyntax.html Lucene
+    # syntax}) from the given index. If no such nodes exist, an empty array is
+    # returned.
+    #
+    # @param index {String} The name of the index, e.g. `node_auto_index`.
+    # @param query {String} The Lucene query, e.g. `foo:bar AND hello:world`.
+    # @param callback {Function}
+    # @return {Array<Node>}
+    #
+    queryIndexedNodes: (index, property, value, query, _) ->
+	    try
+		    services = @getServices _
+		    key = encodeURIComponent property
+		    val = encodeURIComponent value
+		    url = "#{services.node_index}/#{index}/#{key}/#{val}?query=#{encodeURIComponent query}"
+
+		    response = @_request.get url, _
+
+		    if response.statusCode isnt status.OK
+			    # Database error
+			    throw response
+
+		    # Success
+		    return response.body.map (node) =>
+			    new Node this, node
+
+	    catch error
+		    throw adjustError error
 
     ### Relationships: ###
 
