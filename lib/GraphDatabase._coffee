@@ -328,8 +328,13 @@ module.exports = class GraphDatabase
     ### Relationships: ###
 
     # @private
-    createRelationship: (startNode, endNode, type, _) ->
-        # TODO: Implement?
+    createRelationship: (startNode, endNode, type, data, _) ->
+	    data = data || {}
+	    relationShip = new Relationship this,
+		    data: data,
+		    start: startNode,
+		    end: endNode,
+	    return relationShip
 
     #
     # Fetch and "return" (via callback) the relationship at the given URL.
