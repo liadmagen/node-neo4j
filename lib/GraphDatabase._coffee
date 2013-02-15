@@ -330,10 +330,7 @@ module.exports = class GraphDatabase
     # @private
     createRelationship: (startNode, endNode, type, data, _) ->
 	    data = data || {}
-	    relationShip = new Relationship this,
-		    data: data,
-		    start: startNode,
-		    end: endNode,
+	    relationship = startNode.createRelationshipTo endNode, type, data, _
 	    return relationShip
 
     #
